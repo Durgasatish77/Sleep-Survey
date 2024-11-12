@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sleep and Co-Morbidities Questionnaire</title>
+    <style>
+        /* Basic Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Background and Body */
+body {
+    font-family: Arial, sans-serif;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    background: linear-gradient(to bottom, rgb(239, 238, 238), white);
+}
+
+/* Container Styling */
+.container {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 2em 3em;
+    max-width: 800px;
+    width: 100%;
+    height: 75vh; /* Adjusted height */
+    border-radius: 15px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    animation: fadeIn 2s ease forwards;
+    overflow-y: auto; /* Allow scrolling */
+}
+
+/* Fade-In Animation */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Heading and Text */
+h1 {
+    color: #333;
+    font-size: 1.8em;
+    margin-bottom: 1em;
+    font-weight: bold;
+    text-transform: uppercase;
+    background: linear-gradient(45deg, #000000b0, #000000);
+    -webkit-background-clip: text;
+    color: transparent;
+    animation: textGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes textGlow {
+    0% { text-shadow: 0 0 10px rgb(225, 225, 225), 0 0 20px rgba(255, 75, 43, 0.2); }
+    100% { text-shadow: 0 0 20px rgba(233, 233, 233, 0.8), 0 0 30px rgba(255, 75, 43, 0.5); }
+}
+
+/* Survey timer display */
+.timer {
+    font-size: 2em;
+    margin: 1em 0;
+    color: #444;
+    font-weight: bold;
+}
+
+/* Styling for the popup */
+.popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    text-align: center;
+}
+
+/* Popup button styling */
+.popup button {
+    padding: 10px 20px;
+    background: #ff4b2b;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+/* Button hover effect */
+.popup button:hover {
+    background: #ff416c;
+}
+
+/* Form Section Styling */
+.form-section {
+    margin-bottom: 2em;
+}
+
+.form-section label {
+    font-size: 1.1em;
+    color: #444;
+    display: block;
+    margin-bottom: 0.5em;
+}
+
+.form-section input[type="number"] {
+    width: 50%;
+    padding: 0.5em;
+    font-size: 1em;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    margin-top: 0.5em;
+}
+
+.form-section input[type="radio"] {
+    display: none;
+}
+
+.radio-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    flex-direction: column;
+    max-width: 100%; /* Ensure it's responsive */
+}
+
+.radio-option {
+    position: relative;
+}
+
+/* Radio Option Styling to match Submit Button */
+.radio-option label {
+    cursor: pointer;
+    padding: 0.8em 2.5em;  /* Adjust padding to make radio button size equal to submit button */
+    font-size: 1.1em; /* Ensure text is the same size */
+    border: 2px solid #ccc;
+    border-radius: 10px; /* Rounded corners */
+    display: inline-block;
+    width: 100%;  /* Allow label to take full width */
+    max-width: 300px;  /* Make the radio option width the same as submit button */
+    text-align: center;  /* Center the text inside the label */
+    margin-bottom: 1em;  /* Space between radio buttons */
+    transition: 0.3s;
+}
+
+/* Radio Option Hover Effect */
+.radio-option:hover label {
+    background-color: #ff4b2b;
+    color: white;
+    border-color: #ff4b2b;
+    box-shadow: 0 0 10px rgba(255, 75, 43, 0.3);
+}
+
+/* Radio Option Checked Effect */
+.radio-option input[type="radio"]:checked + label {
+    background-color: #ff4b2b;
+    color: white;
+    border-color: #ff4b2b;
+    box-shadow: 0 0 15px rgba(255, 75, 43, 0.5);
+}
+/* Submit Button */
+.submit-btn {
+    margin-top: 1em;
+    padding: 0.8em 2.5em;
+    font-size: 1.1em;
+    color: white;
+    background: linear-gradient(90deg, #ff416c, #ff4b2b);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(255, 75, 43, 0.3);
+    transition: all 0.3s ease;
+}
+
+.submit-btn:hover {
+    background: linear-gradient(90deg, #ff4b2b, #ff416c);
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(255, 75, 43, 0.5);
+}
+
+/* Particle Background Styling */
+#particles-js {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+.glowing-line {
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 0, 0, 0.8) 50%, rgba(255, 255, 255, 0) 100%);
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.6), 0 0 20px rgba(255, 0, 0, 0.4), 0 0 30px rgba(255, 0, 0, 0.2);
+            margin: 20px 0;
+        }
+
+    </style>
+</head>
+<body>
+    <div id="particles-js"></div>
+    <div class="container1" style="position: fixed; top: 0px; left: 50%; transform: translateX(-50%); padding: 0px 80px; background-color: #007aff; color: rgb(255, 255, 255); border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; border-top-left-radius: 0px; border-top-right-radius: 0px; box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2); font-family: Arial, sans-serif; font-size: 18px; text-align: center; z-index: 1000; display: flex; justify-content: center; align-items: center; gap: 10px;">
+        Your Remaining time will be
+        <div class="timer" id="timer" style="font-weight: bold; color: yellow;">30:00</div>
+    </div>
+
+    <div class="container" style="text-align: center;">
+        <h1  style="text-align: center;">Questionnaire for Assessment of Sleep and Related Co-Morbidities</h1>
+        <div class="glowing-line"></div>
+        <h2 style="text-align: center;">General Questions</h2>
+        <hr style=".shadow-line {
+            border: none;
+            height: 2px;
+            background: #ccc;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin: 20px 0;
+        }
+        "><br>
+
+<form id="consent-form">
+    <!-- Consent Section -->
+    <div class="form-section">
+        <label>Do you consent to provide information? <span style="color: red;">*</span></label>
+        <div class="radio-group">
+            <div class="radio-option">
+                <input type="radio" name="consent" value="Yes" id="consent-yes" required>
+                <label for="consent-yes">Yes</label>
+            </div>
+            <div class="radio-option">
+                <input type="radio" name="consent" value="No" id="consent-no">
+                <label for="consent-no">No</label>
+            </div>
+        </div>
+    </div>
+    <hr><br>
+
+    <!-- Age Section -->
+    <div class="form-section">
+        <label for="age">Age <span style="color: red;">*</span></label>
+        <input type="number" name="age" id="age" required min="0" max="150">
+    </div>
+    <hr><br>
+
+    <!-- Occupation Section -->
+    <div class="form-section">
+        <label>Occupation <span style="color: red;">*</span></label>
+        <div class="radio-group">
+            <div class="radio-option">
+                <input type="radio" name="occupation" value="Researcher" id="occupation-researcher" required>
+                <label for="occupation-researcher">Researcher</label>
+            </div>
+            <div class="radio-option">
+                <input type="radio" name="occupation" value="Shift worker" id="occupation-shift">
+                <label for="occupation-shift">Shift Worker</label>
+            </div>
+            <div class="radio-option">
+                <input type="radio" name="occupation" value="Home-Maker" id="occupation-home">
+                <label for="occupation-home">Home-Maker</label>
+            </div>
+            <div class="radio-option">
+                <input type="radio" name="occupation" value="Govt employee" id="occupation-govt">
+                <label for="occupation-govt">Govt Employee</label>
+            </div>
+            <div class="radio-option">
+                <input type="radio" name="occupation" value="Corporate Job" id="occupation-corporate">
+                <label for="occupation-corporate">Corporate Job</label>
+            </div>
+            <div class="radio-option">
+                <input type="radio" name="occupation" value="Other" id="occupation-other">
+                <label for="occupation-other">Other</label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Submit Button -->
+    <input type="submit" class="submit-btn" value="Next" onclick="window.location.href='section_2.html';">
+</form>
+
+<script>
+    document.getElementById("consent-form").addEventListener("submit", function(event) {
+        // Prevent form submission
+        event.preventDefault();
+
+        // Check if the consent radio button is selected
+        const consent = document.querySelector('input[name="consent"]:checked');
+        if (!consent) {
+            alert("Please provide consent.");
+            return;
+        }
+
+        // Check if the age input is filled
+        const age = document.getElementById("age").value;
+        if (!age) {
+            alert("Please enter your age.");
+            return;
+        }
+
+        // Check if an occupation is selected
+        const occupation = document.querySelector('input[name="occupation"]:checked');
+        if (!occupation) {
+            alert("Please select your occupation.");
+            return;
+        }
+
+        // If all fields are valid, redirect to section_2.html
+        window.location.href = "section_2.html";
+    });
+</script>
+
+    </div>
+    <script>
+        let timeLeft = 30 * 60; // 30 minutes in seconds
+        let timerElement = document.getElementById("timer");
+        let popup = document.getElementById("popup");
+        let extendButton = document.getElementById("extend-btn");
+    
+        // Function to update the timer display
+        function updateTimer() {
+            let minutes = Math.floor(timeLeft / 60);
+            let seconds = timeLeft % 60;
+            timerElement.textContent = `${minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
+            timeLeft--;
+            
+            // If it's the last minute of the 29th minute, show the popup
+            if (timeLeft === 60) {
+                setTimeout(() => {
+                    popup.style.display = 'block'; // Show popup when it's time
+                }, 1000);
+            }
+    
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval); // Stop the timer when time runs out
+            }
+        }
+    
+        // Function to extend the timer by 10 minutes
+        function extendTimer() {
+            timeLeft += 10 * 60; // Add 10 minutes
+            popup.style.display = 'none'; // Hide popup
+        }
+    
+        // Start the timer when the page loads
+        let timerInterval = setInterval(updateTimer, 1000);
+    
+        // Event listener to extend the timer when the button is clicked
+        extendButton.addEventListener('click', extendTimer);
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/particles.js"></script>
+    <script>
+        particlesJS("particles-js", {
+            "particles": {
+                "number": {
+                    "value": 6
+                },
+                "color": {
+                    "value": ["#ff416c", "#ff4b2b", "#ff6347", "#ff1493", "#8a2be2"]
+                },
+                "shape": {
+                    "type": "circle"
+                },
+                "opacity": {
+                    "value": 0.5
+                },
+                "size": {
+                    "value": 5
+                },
+                "move": {
+                    "enable": true,
+                    "speed": 3,
+                    "direction": "none",
+                    "out_mode": "out"
+                }
+            }
+        });
+    </script>  
+</body>
+</html>

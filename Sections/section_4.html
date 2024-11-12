@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roommate-Based Questionnaire</title>
+    <style>
+         /* Basic Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Background and Body */
+body {
+    font-family: Arial, sans-serif;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    background: linear-gradient(to bottom, rgb(239, 238, 238), white);
+}
+
+/* Container Styling */
+.container {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 2em 3em;
+    max-width: 800px;
+    width: 100%;
+    height: 75vh; /* Adjusted height */
+    border-radius: 15px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    animation: fadeIn 2s ease forwards;
+    overflow-y: auto; /* Allow scrolling */
+}
+
+/* Fade-In Animation */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Heading and Text */
+h1 {
+    color: #333;
+    font-size: 1.8em;
+    margin-bottom: 1em;
+    font-weight: bold;
+    text-transform: uppercase;
+    background: linear-gradient(45deg, #000000b0, #000000);
+    -webkit-background-clip: text;
+    color: transparent;
+    animation: textGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes textGlow {
+    0% { text-shadow: 0 0 10px rgb(225, 225, 225), 0 0 20px rgba(255, 75, 43, 0.2); }
+    100% { text-shadow: 0 0 20px rgba(233, 233, 233, 0.8), 0 0 30px rgba(255, 75, 43, 0.5); }
+}
+
+/* Survey timer display */
+.timer {
+    font-size: 2em;
+    margin: 1em 0;
+    color: #444;
+    font-weight: bold;
+}
+
+/* Styling for the popup */
+.popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    text-align: center;
+}
+
+/* Popup button styling */
+.popup button {
+    padding: 10px 20px;
+    background: #ff4b2b;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+/* Button hover effect */
+.popup button:hover {
+    background: #ff416c;
+}
+
+/* Form Section Styling */
+.form-section {
+    margin-bottom: 2em;
+}
+
+.form-section label {
+    font-size: 1.1em;
+    color: #444;
+    display: block;
+    margin-bottom: 0.5em;
+}
+
+.form-section input[type="number"] {
+    width: 50%;
+    padding: 0.5em;
+    font-size: 1em;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    margin-top: 0.5em;
+}
+
+.form-section input[type="radio"] {
+    display: none;
+}
+
+.radio-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    flex-direction: column;
+    max-width: 100%; /* Ensure it's responsive */
+}
+
+.radio-option {
+    position: relative;
+}
+
+/* Radio Option Styling to match Submit Button */
+.radio-option label {
+    cursor: pointer;
+    padding: 0.8em 2.5em;  /* Adjust padding to make radio button size equal to submit button */
+    font-size: 1.1em; /* Ensure text is the same size */
+    border: 2px solid #ccc;
+    border-radius: 10px; /* Rounded corners */
+    display: inline-block;
+    width: 100%;  /* Allow label to take full width */
+    max-width: 300px;  /* Make the radio option width the same as submit button */
+    text-align: center;  /* Center the text inside the label */
+    margin-bottom: 1em;  /* Space between radio buttons */
+    transition: 0.3s;
+}
+
+/* Radio Option Hover Effect */
+.radio-option:hover label {
+    background-color: #ff4b2b;
+    color: white;
+    border-color: #ff4b2b;
+    box-shadow: 0 0 10px rgba(255, 75, 43, 0.3);
+}
+
+/* Radio Option Checked Effect */
+.radio-option input[type="radio"]:checked + label {
+    background-color: #ff4b2b;
+    color: white;
+    border-color: #ff4b2b;
+    box-shadow: 0 0 15px rgba(255, 75, 43, 0.5);
+}
+
+/* Submit Button */
+.submit-btn {
+    margin-top: 1em;
+    padding: 0.8em 2.5em;
+    font-size: 1.1em;
+    color: white;
+    background: linear-gradient(90deg, #ff416c, #ff4b2b);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(255, 75, 43, 0.3);
+    transition: all 0.3s ease;
+}
+
+.submit-btn:hover {
+    background: linear-gradient(90deg, #ff4b2b, #ff416c);
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(255, 75, 43, 0.5);
+}
+
+/* Particle Background Styling */
+#particles-js {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+.glowing-line {
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 0, 0, 0.8) 50%, rgba(255, 255, 255, 0) 100%);
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.6), 0 0 20px rgba(255, 0, 0, 0.4), 0 0 30px rgba(255, 0, 0, 0.2);
+            margin: 20px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="particles-js"></div>
+    <div class="container1" style="position: fixed; top: 0px; left: 50%; transform: translateX(-50%); padding: 0px 80px; background-color: #007aff; color: white; border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; border-top-left-radius: 0px; border-top-right-radius: 0px; box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2); font-family: Arial, sans-serif; font-size: 18px; text-align: center; z-index: 1000; display: flex; justify-content: center; align-items: center; gap: 10px;">
+        Your Remaining time will be
+        <div class="timer" id="timer" style="font-weight: bold; color: yellow;">30:00</div>
+    </div>
+
+    <div class="container">
+        <div id="timer" style="font-size: 1.8em; margin-bottom: 1em; font-weight: bold;"></div>
+        <h1>Roommate-Based Questionnaire</h1>
+        <div class="glowing-line"></div>
+
+        <form>
+            <!-- Snoring Question -->
+            <div class="form-section">
+                <label>If you have a roommate or bed partner, how often in the past month have you had loud snoring?
+                    *</label>
+                <div class="radio-group">
+                    <div class="radio-option">
+                        <input type="radio" name="snoring" value="Not during the past month" id="snoring-0" required>
+                        <label for="snoring-0">Not during the past month</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="snoring" value="Less than once a week" id="snoring-1">
+                        <label for="snoring-1">Less than once a week</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="snoring" value="Once or twice a week" id="snoring-2">
+                        <label for="snoring-2">Once or twice a week</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="snoring" value="Three or more times a week" id="snoring-3">
+                        <label for="snoring-3">Three or more times a week</label>
+                    </div>
+                </div>
+            </div>
+            <hr style=".shadow-line {
+                border: none;
+                height: 2px;
+                background: #ccc;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.1);
+                margin: 20px 0;
+            }
+            "><br>
+
+            <!-- Pauses in Breathing Question -->
+            <div class="form-section">
+                <label>If you have a roommate or bed partner, how often in the past month have you had long pauses
+                    between breaths while asleep? *</label>
+                <div class="radio-group">
+                    <div class="radio-option">
+                        <input type="radio" name="breathing" value="Not during the past month" id="breathing-0"
+                            required>
+                        <label for="breathing-0">Not during the past month</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="breathing" value="Less than once a week" id="breathing-1">
+                        <label for="breathing-1">Less than once a week</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="breathing" value="Once or twice a week" id="breathing-2">
+                        <label for="breathing-2">Once or twice a week</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="breathing" value="Three or more times a week" id="breathing-3">
+                        <label for="breathing-3">Three or more times a week</label>
+                    </div>
+                </div>
+            </div>
+            <hr style=".shadow-line {
+                border: none;
+                height: 2px;
+                background: #ccc;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.1);
+                margin: 20px 0;
+            }
+            "><br>
+
+            <!-- Other Restlessness Question -->
+            <div class="form-section">
+                <label>If you have a roommate or bed partner, please describe any other restlessness while you
+                    sleep:</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" name="breathing" value="Not during the past month" id="breathing-0"
+                                required>
+                            <label for="breathing-0">Not during the past month</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="breathing" value="Less than once a week" id="breathing-1">
+                            <label for="breathing-1">Less than once a week</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="breathing" value="Once or twice a week" id="breathing-2">
+                            <label for="breathing-2">Once or twice a week</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="breathing" value="Three or more times a week" id="breathing-3">
+                            <label for="breathing-3">Three or more times a week</label>
+                        </div>
+                    </div>
+            </div>
+            <hr style=".shadow-line {
+                border: none;
+                height: 2px;
+                background: #ccc;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.1);
+                margin: 20px 0;
+            }
+            "><br>
+            <div class="form-section">
+                <label>Other restlessness while you sleep, please describe</label>
+                <textarea class="text-input" name="other_restlessness" rows="3"
+                    placeholder="Describe here..."></textarea>
+            </div>
+            <hr style=".shadow-line {
+                border: none;
+                height: 2px;
+                background: #ccc;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.1);
+                margin: 20px 0;
+            }
+            "><br>
+
+            <!-- Disorientation Question -->
+            <div class="form-section">
+                <label>If you have a roommate or bed partner, how often in the past month have you had episodes of
+                    disorientation or confusion during sleep? *</label>
+                <div class="radio-group">
+                    <div class="radio-option">
+                        <input type="radio" name="disorientation" value="Not during the past month"
+                            id="disorientation-0" required>
+                        <label for="disorientation-0">Not during the past month</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="disorientation" value="Less than once a week" id="disorientation-1">
+                        <label for="disorientation-1">Less than once a week</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="disorientation" value="Once or twice a week" id="disorientation-2">
+                        <label for="disorientation-2">Once or twice a week</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="disorientation" value="Three or more times a week"
+                            id="disorientation-3">
+                        <label for="disorientation-3">Three or more times a week</label>
+                    </div>
+                </div>
+            </div>
+            
+
+            <!-- Button Group -->
+            <input type="submit" class="submit-btn" value="Back" onclick="window.location.href='section_3.html';">
+
+            <input type="submit" class="submit-btn" value="Next" onclick="window.location.href='section_5.html';">
+        </form>
+    </div>
+
+
+    <!-- Timer Script -->
+    <script>
+        let timeLeft = 30 * 60;
+        const timerElement = document.getElementById("timer");
+
+        function updateTimer() {
+            let minutes = Math.floor(timeLeft / 60);
+            let seconds = timeLeft % 60;
+            timerElement.textContent = `${minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
+            timeLeft--;
+
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                alert("Time is up! The form will be submitted.");
+                document.querySelector("form").submit();
+            }
+        }
+
+        const timerInterval = setInterval(updateTimer, 1000);
+    </script>
+
+    <!-- Particles.js Initialization -->
+    <script src="https://cdn.jsdelivr.net/npm/particles.js"></script>
+    <script>
+        particlesJS("particles-js", {
+            "particles": {
+                "number": {
+                    "value": 6
+                },
+                "color": {
+                    "value": ["#ff416c", "#ff4b2b", "#ff6347", "#ff1493", "#8a2be2"]
+                },
+                "shape": {
+                    "type": "circle"
+                },
+                "opacity": {
+                    "value": 0.5
+                },
+                "size": {
+                    "value": 5
+                },
+                "move": {
+                    "enable": true,
+                    "speed": 3,
+                    "direction": "none",
+                    "out_mode": "out"
+                }
+            }
+        });
+    </script>  
+</body>
+
+</html>

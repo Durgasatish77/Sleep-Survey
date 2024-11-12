@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sleep and Co-Morbidities Questionnaire</title>
+    <style>
+        /* Basic Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Background and Body */
+body {
+    font-family: Arial, sans-serif;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    background: linear-gradient(to bottom, rgb(239, 238, 238), white);
+}
+
+/* Container Styling */
+.container {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 2em 3em;
+    max-width: 800px;
+    width: 100%;
+    height: 75vh; /* Adjusted height */
+    border-radius: 15px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    animation: fadeIn 2s ease forwards;
+    overflow-y: auto; /* Allow scrolling */
+}
+
+/* Fade-In Animation */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Heading and Text */
+h1 {
+    color: #333;
+    font-size: 1.8em;
+    margin-bottom: 1em;
+    font-weight: bold;
+    text-transform: uppercase;
+    background: linear-gradient(45deg, #000000b0, #000000);
+    -webkit-background-clip: text;
+    color: transparent;
+    animation: textGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes textGlow {
+    0% { text-shadow: 0 0 10px rgb(225, 225, 225), 0 0 20px rgba(255, 75, 43, 0.2); }
+    100% { text-shadow: 0 0 20px rgba(233, 233, 233, 0.8), 0 0 30px rgba(255, 75, 43, 0.5); }
+}
+
+/* Survey timer display */
+.timer {
+    font-size: 2em;
+    margin: 1em 0;
+    color: #444;
+    font-weight: bold;
+}
+
+/* Styling for the popup */
+.popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    text-align: center;
+}
+
+/* Popup button styling */
+.popup button {
+    padding: 10px 20px;
+    background: #ff4b2b;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+/* Button hover effect */
+.popup button:hover {
+    background: #ff416c;
+}
+
+/* Form Section Styling */
+.form-section {
+    margin-bottom: 2em;
+}
+
+.form-section label {
+    font-size: 1.1em;
+    color: #444;
+    display: block;
+    margin-bottom: 0.5em;
+}
+
+.form-section input[type="number"] {
+    width: 50%;
+    padding: 0.5em;
+    font-size: 1em;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    margin-top: 0.5em;
+}
+
+.form-section input[type="radio"] {
+    display: none;
+}
+
+.radio-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    flex-direction: column;
+    max-width: 100%; /* Ensure it's responsive */
+}
+
+.radio-option {
+    position: relative;
+}
+
+/* Radio Option Styling to match Submit Button */
+.radio-option label {
+    cursor: pointer;
+    padding: 0.8em 2.5em;  /* Adjust padding to make radio button size equal to submit button */
+    font-size: 1.1em; /* Ensure text is the same size */
+    border: 2px solid #ccc;
+    border-radius: 10px; /* Rounded corners */
+    display: inline-block;
+    width: 100%;  /* Allow label to take full width */
+    max-width: 300px;  /* Make the radio option width the same as submit button */
+    text-align: center;  /* Center the text inside the label */
+    margin-bottom: 1em;  /* Space between radio buttons */
+    transition: 0.3s;
+}
+
+/* Radio Option Hover Effect */
+.radio-option:hover label {
+    background-color: #ff4b2b;
+    color: white;
+    border-color: #ff4b2b;
+    box-shadow: 0 0 10px rgba(255, 75, 43, 0.3);
+}
+
+/* Radio Option Checked Effect */
+.radio-option input[type="radio"]:checked + label {
+    background-color: #ff4b2b;
+    color: white;
+    border-color: #ff4b2b;
+    box-shadow: 0 0 15px rgba(255, 75, 43, 0.5);
+}
+
+/* Submit Button */
+.submit-btn {
+    margin-top: 1em;
+    padding: 0.8em 2.5em;
+    font-size: 1.1em;
+    color: white;
+    background: linear-gradient(90deg, #ff416c, #ff4b2b);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(255, 75, 43, 0.3);
+    transition: all 0.3s ease;
+}
+
+.submit-btn:hover {
+    background: linear-gradient(90deg, #ff4b2b, #ff416c);
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(255, 75, 43, 0.5);
+}
+
+/* Particle Background Styling */
+#particles-js {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+.glowing-line {
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 0, 0, 0.8) 50%, rgba(255, 255, 255, 0) 100%);
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.6), 0 0 20px rgba(255, 0, 0, 0.4), 0 0 30px rgba(255, 0, 0, 0.2);
+            margin: 20px 0;
+        }
+
+    </style>
+</head>
+<body>
+    <div id="particles-js"></div>
+    <div class="container1" style="position: fixed; top: 0px; left: 50%; transform: translateX(-50%); padding: 0px 80px; background-color: #007aff; color: white; border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; border-top-left-radius: 0px; border-top-right-radius: 0px; box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2); font-family: Arial, sans-serif; font-size: 18px; text-align: center; z-index: 1000; display: flex; justify-content: center; align-items: center; gap: 10px;">
+        Your Remaining time will be
+        <div class="timer" id="timer" style="font-weight: bold; color: yellow;">30:00</div>
+    </div>
+    
+    
+    
+    <div class="container" >
+        
+       
+        <h1 style="text-align: center;">Pittsburgh Sleep Quality Index <br>(PSQI)</h1>
+        <div class="glowing-line"></div>
+        <p style="font-family: Arial, sans-serif; font-size: 16px; line-height: 1.6; color: #333; margin-bottom: 20px;">
+            Instructions: The following questions relate to your usual sleep habits during the past month only. Your answers should indicate the most accurate reply for the majority of days and nights in the past month. Please answer all questions.
+
+        </p>
+        <div class="glowing-line"></div>
+        
+        
+        <form>
+            <!-- Consent Section -->
+            <div class="form-section">
+                <label ><strong>During the past month, what time have you usually gone to bed at night?</strong> <span style="color: red;">*</span></label>
+
+                <div class="radio-group">
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Researcher" id="occupation-researcher" required>
+                        <label for="occupation-researcher">8:00 – 10:00 PM</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Shift worker" id="occupation-shift">
+                        <label for="occupation-shift">10:00 - 11:00 PM</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Home-Maker" id="occupation-home">
+                        <label for="occupation-home">11:00 PM - 12:00 AM</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Govt employee" id="occupation-govt">
+                        <label for="occupation-govt">12:00 - 2:00 AM</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Corporate Job" id="occupation-corporate">
+                        <label for="occupation-corporate">after 2:00 AM</label>
+                    </div>
+                </div>
+                <hr style=".shadow-line {
+                    border: none;
+                    height: 2px;
+                    background: #ccc;
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.1);
+                    margin: 20px 0;
+                }
+                "><br>
+           
+
+            <!-- Consent Section -->
+            <div class="form-section">
+                <label ><strong>During the past month, how long (in minutes) has it usually taken you to fall asleep each night?</strong> <span style="color: red;">*</span></label>
+
+                <div class="radio-group">
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Researcher" id="occupation-researcher" required>
+                        <label for="occupation-researcher">10 - 15</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Shift worker" id="occupation-shift">
+                        <label for="occupation-shift">15 - 30</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Home-Maker" id="occupation-home">
+                        <label for="occupation-home">30 - 45</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Govt employee" id="occupation-govt">
+                        <label for="occupation-govt">45 - 60</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Corporate Job" id="occupation-corporate">
+                        <label for="occupation-corporate">more than 60 mins</label>
+                    </div>
+                </div>
+                <hr style=".shadow-line {
+                    border: none;
+                    height: 2px;
+                    background: #ccc;
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.1);
+                    margin: 20px 0;
+                }
+                "><br>
+
+                <!-- Consent Section -->
+            <div class="form-section">
+                <label ><strong>During the past month, what time have you usually gotten up in the morning?</strong> <span style="color: red;">*</span></label>
+
+                <div class="radio-group">
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Researcher" id="occupation-researcher" required>
+                        <label for="occupation-researcher">Before 5:00 am</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Shift worker" id="occupation-shift">
+                        <label for="occupation-shift">5:00 - 6:30 am</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Home-Maker" id="occupation-home">
+                        <label for="occupation-home">6:30 - 7:45 am</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Govt employee" id="occupation-govt">
+                        <label for="occupation-govt">7:45 - 9:45 am</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Corporate Job" id="occupation-corporate">
+                        <label for="occupation-corporate">9:45 - 11:00 am</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Other" id="occupation-other">
+                        <label for="occupation-other">After 11:00 am</label>
+                    </div>
+                </div>
+                <hr style=".shadow-line {
+                    border: none;
+                    height: 2px;
+                    background: #ccc;
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.1);
+                    margin: 20px 0;
+                }
+                "><br>
+
+                <!-- Consent Section -->
+            <div class="form-section">
+                <label ><strong>During the past month, how many hours of actual sleep did you get at night? (This may be different than the number of hours you spent in bed.)</strong> <span style="color: red;">*</span></label>
+
+                <div class="radio-group">
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Researcher" id="occupation-researcher" required>
+                        <label for="occupation-researcher">less than 4 hours</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Shift worker" id="occupation-shift">
+                        <label for="occupation-shift">4 - 5 hours</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Home-Maker" id="occupation-home">
+                        <label for="occupation-home">5 - 6 hours</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Govt employee" id="occupation-govt">
+                        <label for="occupation-govt">6 - 7 hours</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Corporate Job" id="occupation-corporate">
+                        <label for="occupation-corporate">7 - 8 hours</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Other" id="occupation-other">
+                        <label for="occupation-other">8 - 9 hours</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Other" id="occupation-other">
+                        <label for="occupation-other">9 - 10 hours</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Other" id="occupation-other">
+                        <label for="occupation-other">more than 10 hours</label>
+                    </div>
+                </div>
+                <hr style=".shadow-line {
+                    border: none;
+                    height: 2px;
+                    background: #ccc;
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.1);
+                    margin: 20px 0;
+                }
+                "><br>
+
+                <!-- Consent Section -->
+            <div class="form-section">
+                <label ><strong>During the past month, how often have you had more trouble sleeping because you can't get to sleep within 30 minutes.</strong> <span style="color: red;">*</span></label>
+
+                <div class="radio-group">
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Researcher" id="occupation-researcher" required>
+                        <label for="occupation-researcher">Not during the past month</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Shift worker" id="occupation-shift">
+                        <label for="occupation-shift">Less than once a week</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Home-Maker" id="occupation-home">
+                        <label for="occupation-home">Once or twice a week</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Govt employee" id="occupation-govt">
+                        <label for="occupation-govt">Three or more times a week</label>
+                    </div>
+                </div>
+                <hr style=".shadow-line {
+                    border: none;
+                    height: 2px;
+                    background: #ccc;
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.1);
+                    margin: 20px 0;
+                }
+                "><br>
+
+                <!-- Consent Section -->
+            <div class="form-section">
+                <label ><strong>During the past month, how often have you had more trouble sleeping because you wake up in the middle of the night or early morning  
+                </strong> <span style="color: red;">*</span></label>
+
+                <div class="radio-group">
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Researcher" id="occupation-researcher" required>
+                        <label for="occupation-researcher">Not during the past month</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Shift worker" id="occupation-shift">
+                        <label for="occupation-shift">Less than once a week</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Home-Maker" id="occupation-home">
+                        <label for="occupation-home">Once or twice a week</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Govt employee" id="occupation-govt">
+                        <label for="occupation-govt">Three or more times a week</label>
+                    </div>
+                </div>
+                <hr style=".shadow-line {
+                    border: none;
+                    height: 2px;
+                    background: #ccc;
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.1);
+                    margin: 20px 0;
+                }
+                "><br>
+
+                <!-- Consent Section -->
+            <div class="form-section">
+                <label ><strong>During the past month, how often have you had more trouble sleeping because you have to get up to use the bathroom</strong> <span style="color: red;">*</span></label>
+
+                <<div class="radio-group">
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Researcher" id="occupation-researcher" required>
+                        <label for="occupation-researcher">Not during the past month</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Shift worker" id="occupation-shift">
+                        <label for="occupation-shift">Less than once a week</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Home-Maker" id="occupation-home">
+                        <label for="occupation-home">Once or twice a week</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Govt employee" id="occupation-govt">
+                        <label for="occupation-govt">Three or more times a week</label>
+                    </div>
+                </div>
+                <hr style=".shadow-line {
+                    border: none;
+                    height: 2px;
+                    background: #ccc;
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.1);
+                    margin: 20px 0;
+                }
+                "><br>
+
+                    <!-- Consent Section -->
+            <div class="form-section">
+                <label ><strong>During the past month, how often have you had more trouble sleeping because you cannot breathe comfortably</strong> <span style="color: red;">*</span></label>
+
+                <div class="radio-group">
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Researcher" id="occupation-researcher" required>
+                        <label for="occupation-researcher">Not during the past month</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Shift worker" id="occupation-shift">
+                        <label for="occupation-shift">Less than once a week</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Home-Maker" id="occupation-home">
+                        <label for="occupation-home">Once or twice a week</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Govt employee" id="occupation-govt">
+                        <label for="occupation-govt">Three or more times a week</label>
+                    </div>
+                </div>
+                <hr style=".shadow-line {
+                    border: none;
+                    height: 2px;
+                    background: #ccc;
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.1);
+                    margin: 20px 0;
+                }
+                "><br>
+                <!-- Consent Section -->
+            <div class="form-section">
+                <label ><strong>During the past month, how often have you had more trouble sleeping because you cough or snore loudly 
+                </strong> <span style="color: red;">*</span></label>
+
+                <div class="radio-group">
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Researcher" id="occupation-researcher" required>
+                        <label for="occupation-researcher">Not during the past month</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Shift worker" id="occupation-shift">
+                        <label for="occupation-shift">Less than once a week</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Home-Maker" id="occupation-home">
+                        <label for="occupation-home">Once or twice a week</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Govt employee" id="occupation-govt">
+                        <label for="occupation-govt">Three or more times a week</label>
+                    </div>
+                </div>
+                <hr style=".shadow-line {
+                    border: none;
+                    height: 2px;
+                    background: #ccc;
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.1);
+                    margin: 20px 0;
+                }
+                "><br>
+                <!-- Consent Section -->
+            <div class="form-section">
+                <label ><strong>During the past month, how often have you had more trouble sleeping because you feel too cold</strong> <span style="color: red;">*</span></label>
+
+                <div class="radio-group">
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Researcher" id="occupation-researcher" required>
+                        <label for="occupation-researcher">Not during the past month</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Shift worker" id="occupation-shift">
+                        <label for="occupation-shift">Less than once a week</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Home-Maker" id="occupation-home">
+                        <label for="occupation-home">Once or twice a week</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Govt employee" id="occupation-govt">
+                        <label for="occupation-govt">Three or more times a week</label>
+                    </div>
+                </div>
+                <hr style=".shadow-line {
+                    border: none;
+                    height: 2px;
+                    background: #ccc;
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.1);
+                    margin: 20px 0;
+                }
+                "><br>
+                <!-- Consent Section -->
+            <div class="form-section">
+                <label ><strong>During the past month, how often have you had more trouble sleeping because you feel too hot</strong> <span style="color: red;">*</span></label>
+
+                <div class="radio-group">
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Researcher" id="occupation-researcher" required>
+                        <label for="occupation-researcher">Not during the past month</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Shift worker" id="occupation-shift">
+                        <label for="occupation-shift">Less than once a week</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Home-Maker" id="occupation-home">
+                        <label for="occupation-home">Once or twice a week</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Govt employee" id="occupation-govt">
+                        <label for="occupation-govt">Three or more times a week</label>
+                    </div>
+                </div>
+                <hr style=".shadow-line {
+                    border: none;
+                    height: 2px;
+                    background: #ccc;
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.1);
+                    margin: 20px 0;
+                }
+                "><br>
+                <!-- Consent Section -->
+            <div class="form-section">
+                <label ><strong>During the past month, how often have you had more trouble sleeping because you have bad dreams</strong> <span style="color: red;">*</span></label>
+
+                <div class="radio-group">
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Researcher" id="occupation-researcher" required>
+                        <label for="occupation-researcher">Not during the past month</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Shift worker" id="occupation-shift">
+                        <label for="occupation-shift">Less than once a week</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Home-Maker" id="occupation-home">
+                        <label for="occupation-home">Once or twice a week</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Govt employee" id="occupation-govt">
+                        <label for="occupation-govt">Three or more times a week</label>
+                    </div>
+                </div>
+                <hr style=".shadow-line {
+                    border: none;
+                    height: 2px;
+                    background: #ccc;
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.1);
+                    margin: 20px 0;
+                }
+                "><br>
+                <!-- Consent Section -->
+            <div class="form-section">
+                <label ><strong>During the past month, how often have you had more trouble sleeping because you have pain</strong> <span style="color: red;">*</span></label>
+
+                <div class="radio-group">
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Researcher" id="occupation-researcher" required>
+                        <label for="occupation-researcher">Not during the past month</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Shift worker" id="occupation-shift">
+                        <label for="occupation-shift">Less than once a week</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Home-Maker" id="occupation-home">
+                        <label for="occupation-home">Once or twice a week</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Govt employee" id="occupation-govt">
+                        <label for="occupation-govt">Three or more times a week</label>
+                    </div>
+                </div>
+                <hr style=".shadow-line {
+                    border: none;
+                    height: 2px;
+                    background: #ccc;
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.1);
+                    margin: 20px 0;
+                }
+                "><br>
+                <!-- Consent Section -->
+            <div class="form-section">
+                <label ><strong>During the past month, how often have you taken medicine to help you sleep (prescribed or “over the counter”)? </strong> <span style="color: red;">*</span></label>
+
+                <div class="radio-group">
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Researcher" id="occupation-researcher" required>
+                        <label for="occupation-researcher">Not during the past month</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Shift worker" id="occupation-shift">
+                        <label for="occupation-shift">Less than once a week</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Home-Maker" id="occupation-home">
+                        <label for="occupation-home">Once or twice a week</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Govt employee" id="occupation-govt">
+                        <label for="occupation-govt">Three or more times a week</label>
+                    </div>
+                </div>
+                <hr style=".shadow-line {
+                    border: none;
+                    height: 2px;
+                    background: #ccc;
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.1);
+                    margin: 20px 0;
+                }
+                "><br>
+                <!-- Consent Section -->
+            <div class="form-section">
+                <label ><strong>During the past month, how often have you had trouble staying awake while driving, eating meals, or engaging in social activity?</strong> <span style="color: red;">*</span></label>
+
+                <div class="radio-group">
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Researcher" id="occupation-researcher" required>
+                        <label for="occupation-researcher">Not during the past month</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Shift worker" id="occupation-shift">
+                        <label for="occupation-shift">Less than once a week</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Home-Maker" id="occupation-home">
+                        <label for="occupation-home">Once or twice a week</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Govt employee" id="occupation-govt">
+                        <label for="occupation-govt">Three or more times a week</label>
+                    </div>
+                </div>
+                <hr style=".shadow-line {
+                    border: none;
+                    height: 2px;
+                    background: #ccc;
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.1);
+                    margin: 20px 0;
+                }
+                "><br>
+                <!-- Consent Section -->
+            <div class="form-section">
+                <label ><strong>During the past month, how much of a problem has it been for you to keep up enough enthusiasm to get things done?</strong> <span style="color: red;">*</span></label>
+
+                <div class="radio-group">
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Researcher" id="occupation-researcher" required>
+                        <label for="occupation-researcher">Not during the past month</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Shift worker" id="occupation-shift">
+                        <label for="occupation-shift">Less than once a week</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Home-Maker" id="occupation-home">
+                        <label for="occupation-home">Once or twice a week</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Govt employee" id="occupation-govt">
+                        <label for="occupation-govt">Three or more times a week</label>
+                    </div>
+                </div>
+                <hr style=".shadow-line {
+                    border: none;
+                    height: 2px;
+                    background: #ccc;
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.1);
+                    margin: 20px 0;
+                }
+                "><br>
+                <!-- Consent Section -->
+            <div class="form-section">
+                <label ><strong>During the past month, how would you rate your sleep quality overall?
+                </strong> <span style="color: red;">*</span></label>
+
+                <div class="radio-group">
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Researcher" id="occupation-researcher" required>
+                        <label for="occupation-researcher">Not during the past month</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Shift worker" id="occupation-shift">
+                        <label for="occupation-shift">Less than once a week</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Home-Maker" id="occupation-home">
+                        <label for="occupation-home">Once or twice a week</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Govt employee" id="occupation-govt">
+                        <label for="occupation-govt">Three or more times a week</label>
+                    </div>
+                </div>
+                <hr style=".shadow-line {
+                    border: none;
+                    height: 2px;
+                    background: #ccc;
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.1);
+                    margin: 20px 0;
+                }
+                "><br>
+                <!-- Consent Section -->
+            <div class="form-section">
+                <label ><strong>Do you have a bed partner or roommate?
+                </strong> <span style="color: red;">*</span></label>
+
+                <div class="radio-group">
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Researcher" id="occupation-researcher" required>
+                        <label for="occupation-researcher">Not during the past month</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Shift worker" id="occupation-shift">
+                        <label for="occupation-shift">Less than once a week</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Home-Maker" id="occupation-home">
+                        <label for="occupation-home">Once or twice a week</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="occupation" value="Govt employee" id="occupation-govt">
+                        <label for="occupation-govt">Three or more times a week</label>
+                    </div>
+                </div>
+                <hr style=".shadow-line {
+                    border: none;
+                    height: 2px;
+                    background: #ccc;
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.1);
+                    margin: 20px 0;
+                }
+                "><br>
+                
+                <!-- Consent Section -->
+            <div class="form-section">
+                <label ><strong>Other reasons(s), please describe</strong> <span style="color: red;">*</span></label>
+
+                <input type="text" id="answer" name="answer" placeholder="Enter your answer here"
+       style="padding: 10px; font-size: 16px; width: 100%; max-width: 400px; border: 1px solid #ccc; border-radius: 5px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); outline: none;">
+<br><br>
+
+                
+
+
+            <input type="submit" class="submit-btn" value="Back" onclick="window.location.href='section_2.html';">
+
+            <input type="submit" class="submit-btn" value="Next" onclick="window.location.href='section_4.html';">
+        </form>
+    </div>
+    <script>
+        let timeLeft = 30 * 60; // 30 minutes in seconds
+        let timerElement = document.getElementById("timer");
+        let popup = document.getElementById("popup");
+        let extendButton = document.getElementById("extend-btn");
+    
+        // Function to update the timer display
+        function updateTimer() {
+            let minutes = Math.floor(timeLeft / 60);
+            let seconds = timeLeft % 60;
+            timerElement.textContent = `${minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
+            timeLeft--;
+            
+            // If it's the last minute of the 29th minute, show the popup
+            if (timeLeft === 60) {
+                setTimeout(() => {
+                    popup.style.display = 'block'; // Show popup when it's time
+                }, 1000);
+            }
+    
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval); // Stop the timer when time runs out
+            }
+        }
+    
+        // Function to extend the timer by 10 minutes
+        function extendTimer() {
+            timeLeft += 10 * 60; // Add 10 minutes
+            popup.style.display = 'none'; // Hide popup
+        }
+    
+        // Start the timer when the page loads
+        let timerInterval = setInterval(updateTimer, 1000);
+    
+        // Event listener to extend the timer when the button is clicked
+        extendButton.addEventListener('click', extendTimer);
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/particles.js"></script>
+    <script>
+        particlesJS("particles-js", {
+            "particles": {
+                "number": {
+                    "value": 6
+                },
+                "color": {
+                    "value": ["#ff416c", "#ff4b2b", "#ff6347", "#ff1493", "#8a2be2"]
+                },
+                "shape": {
+                    "type": "circle"
+                },
+                "opacity": {
+                    "value": 0.5
+                },
+                "size": {
+                    "value": 5
+                },
+                "move": {
+                    "enable": true,
+                    "speed": 3,
+                    "direction": "none",
+                    "out_mode": "out"
+                }
+            }
+        });
+    </script>  
+</body>
+</html>

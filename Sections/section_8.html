@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perceived Stress Scale</title>
+    <style>
+        /* Basic Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Background and Body */
+body {
+    font-family: Arial, sans-serif;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    background: linear-gradient(to bottom, rgb(239, 238, 238), white);
+}
+
+/* Container Styling */
+.container {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 2em 3em;
+    max-width: 800px;
+    width: 100%;
+    height: 75vh; /* Adjusted height */
+    border-radius: 15px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    animation: fadeIn 2s ease forwards;
+    overflow-y: auto; /* Allow scrolling */
+}
+
+/* Fade-In Animation */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Heading and Text */
+h1 {
+    color: #333;
+    font-size: 1.8em;
+    margin-bottom: 1em;
+    font-weight: bold;
+    text-transform: uppercase;
+    background: linear-gradient(45deg, #000000b0, #000000);
+    -webkit-background-clip: text;
+    color: transparent;
+    animation: textGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes textGlow {
+    0% { text-shadow: 0 0 10px rgb(225, 225, 225), 0 0 20px rgba(255, 75, 43, 0.2); }
+    100% { text-shadow: 0 0 20px rgba(233, 233, 233, 0.8), 0 0 30px rgba(255, 75, 43, 0.5); }
+}
+
+/* Survey timer display */
+.timer {
+    font-size: 2em;
+    margin: 1em 0;
+    color: #444;
+    font-weight: bold;
+}
+
+/* Styling for the popup */
+.popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    text-align: center;
+}
+
+/* Popup button styling */
+.popup button {
+    padding: 10px 20px;
+    background: #ff4b2b;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+/* Button hover effect */
+.popup button:hover {
+    background: #ff416c;
+}
+
+/* Form Section Styling */
+.form-section {
+    margin-bottom: 2em;
+}
+
+.form-section label {
+    font-size: 1.1em;
+    color: #444;
+    display: block;
+    margin-bottom: 0.5em;
+}
+
+.form-section input[type="number"] {
+    width: 50%;
+    padding: 0.5em;
+    font-size: 1em;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    margin-top: 0.5em;
+}
+
+.form-section input[type="radio"] {
+    display: none;
+}
+
+.radio-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    flex-direction: column;
+    max-width: 100%; /* Ensure it's responsive */
+}
+
+.radio-option {
+    position: relative;
+}
+
+/* Radio Option Styling to match Submit Button */
+.radio-option label {
+    cursor: pointer;
+    padding: 0.8em 2.5em;  /* Adjust padding to make radio button size equal to submit button */
+    font-size: 1.1em; /* Ensure text is the same size */
+    border: 2px solid #ccc;
+    border-radius: 10px; /* Rounded corners */
+    display: inline-block;
+    width: 100%;  /* Allow label to take full width */
+    max-width: 300px;  /* Make the radio option width the same as submit button */
+    text-align: center;  /* Center the text inside the label */
+    margin-bottom: 1em;  /* Space between radio buttons */
+    transition: 0.3s;
+}
+
+/* Radio Option Hover Effect */
+.radio-option:hover label {
+    background-color: #ff4b2b;
+    color: white;
+    border-color: #ff4b2b;
+    box-shadow: 0 0 10px rgba(255, 75, 43, 0.3);
+}
+
+/* Radio Option Checked Effect */
+.radio-option input[type="radio"]:checked + label {
+    background-color: #ff4b2b;
+    color: white;
+    border-color: #ff4b2b;
+    box-shadow: 0 0 15px rgba(255, 75, 43, 0.5);
+}
+
+/* Submit Button */
+.submit-btn {
+    margin-top: 1em;
+    padding: 0.8em 2.5em;
+    font-size: 1.1em;
+    color: white;
+    background: linear-gradient(90deg, #ff416c, #ff4b2b);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(255, 75, 43, 0.3);
+    transition: all 0.3s ease;
+}
+
+.submit-btn:hover {
+    background: linear-gradient(90deg, #ff4b2b, #ff416c);
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(255, 75, 43, 0.5);
+}
+
+/* Particle Background Styling */
+#particles-js {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+.glowing-line {
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 0, 0, 0.8) 50%, rgba(255, 255, 255, 0) 100%);
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.6), 0 0 20px rgba(255, 0, 0, 0.4), 0 0 30px rgba(255, 0, 0, 0.2);
+            margin: 20px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="particles-js"></div>
+    <div class="container1" style="position: fixed; top: 0px; left: 50%; transform: translateX(-50%); padding: 0px 80px; background-color: #007aff; color: white; border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; border-top-left-radius: 0px; border-top-right-radius: 0px; box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2); font-family: Arial, sans-serif; font-size: 18px; text-align: center; z-index: 1000; display: flex; justify-content: center; align-items: center; gap: 10px;">
+        Your Remaining time will be
+        <div class="timer" id="timer" style="font-weight: bold; color: yellow;">30:00</div>
+    </div>
+    <div class="container">
+        <h1>Stop Bang </h1>
+        <div class="glowing-line"></div>
+        
+        <div id="questionSection">
+            <!-- Question 1 -->
+            <div class="form-section">
+                <label>Do you snore loudly?
+
+                </label>
+                <div class="radio-group">
+                    <div class="radio-option">
+                        <input type="radio" id="q1-0" name="q1" value="0" required>
+                        <label for="q1-0">Yes</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="q1-1" name="q1" value="1" required>
+                        <label for="q1-1">No</label>
+                    </div>
+                </div>
+            </div>
+            <hr style=".shadow-line {
+                border: none;
+                height: 2px;
+                background: #ccc;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.1);
+                margin: 20px 0;
+            }
+            "><br>
+
+            <!-- Question 2 -->
+            <div class="form-section">
+                <label>Do you often feel tired, fatigued, or sleepy during the daytime?
+
+                </label>
+                <div class="radio-group">
+                    <div class="radio-option">
+                        <input type="radio" id="q1-0" name="q1" value="0" required>
+                        <label for="q1-0">Yes</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="q1-1" name="q1" value="1" required>
+                        <label for="q1-1">No</label>
+                    </div>
+                </div>
+            </div>
+            <hr style=".shadow-line {
+                border: none;
+                height: 2px;
+                background: #ccc;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.1);
+                margin: 20px 0;
+            }
+            "><br>
+
+            <!-- Question 3 -->
+            <div class="form-section">
+                <label>Has anyone observed you stop breathing during sleep?
+                </label>
+                <div class="radio-group">
+                    <div class="radio-option">
+                        <input type="radio" id="q1-0" name="q1" value="0" required>
+                        <label for="q1-0">Yes</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="q1-1" name="q1" value="1" required>
+                        <label for="q1-1">No</label>
+                    </div>
+                </div>
+            </div>
+            <hr style=".shadow-line {
+                border: none;
+                height: 2px;
+                background: #ccc;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.1);
+                margin: 20px 0;
+            }
+            "><br>
+
+            <!-- Question 4 (Reverse) -->
+            <div class="form-section">
+                <label>Do you have (or are you being treated for) high blood pressure?
+                </label>
+                <div class="radio-group">
+                    <div class="radio-option">
+                        <input type="radio" id="q1-0" name="q1" value="0" required>
+                        <label for="q1-0">Yes</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="q1-1" name="q1" value="1" required>
+                        <label for="q1-1">No</label>
+                    </div>
+                </div>
+            </div>
+            <hr style=".shadow-line {
+                border: none;
+                height: 2px;
+                background: #ccc;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.1);
+                margin: 20px 0;
+            }
+            "><br>
+
+            <!-- Question 5 (Reverse) -->
+            <div class="form-section">
+                <label>BMI 
+                    *
+                    The formula for BMI is weight in kilograms divided by height in meters squared</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="q1-0" name="q1" value="0" required>
+                            <label for="q1-0">≤35kg/m2</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="q1-1" name="q1" value="1" required>
+                            <label for="q1-1"> 35kg/m2</label>
+                        </div>
+                    </div>
+            </div>
+            <hr style=".shadow-line {
+                border: none;
+                height: 2px;
+                background: #ccc;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.1);
+                margin: 20px 0;
+            }
+            "><br>
+
+            <!-- Question 6 -->
+            <div class="form-section">
+                <label>Age</label>
+                <div class="radio-group">
+                    <div class="radio-option">
+                        <input type="radio" id="q1-0" name="q1" value="0" required>
+                        <label for="q1-0">≤50</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="q1-1" name="q1" value="1" required>
+                        <label for="q1-1">> 50</label>
+                    </div>
+                </div>
+            </div>
+            <hr style=".shadow-line {
+                border: none;
+                height: 2px;
+                background: #ccc;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.1);
+                margin: 20px 0;
+            }
+            "><br>
+
+            <!-- Question 7 (Reverse) -->
+            <div class="form-section">
+                <label>Neck circumference
+                </label>
+                <div class="radio-group">
+                    <div class="radio-option">
+                        <input type="radio" id="q1-0" name="q1" value="0" required>
+                        <label for="q1-0">≤40cm</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="q1-1" name="q1" value="1" required>
+                        <label for="q1-1">> 40cm</label>
+                    </div>
+                </div>
+            </div>
+            <hr style=".shadow-line {
+                border: none;
+                height: 2px;
+                background: #ccc;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.1);
+                margin: 20px 0;
+            }
+            "><br>
+
+            <!-- Question 8 (Reverse) -->
+            <div class="form-section">
+                <label>Gender</label>
+                <div class="radio-group">
+                    <div class="radio-option">
+                        <input type="radio" id="q1-0" name="q1" value="0" required>
+                        <label for="q1-0">Male</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="q1-1" name="q1" value="1" required>
+                        <label for="q1-1">Female</label>
+                    </div>
+                </div>
+            </div>
+            <input type="submit" class="submit-btn" value="Back" onclick="window.location.href='section_7.html';">
+
+            <input type="submit" class="submit-btn" value="Next" onclick="window.location.href='section_9.html';">
+        </form>
+        </div>
+        <script>
+            let timerValue = 30 * 60;
+            const timerElement = document.getElementById('timer');
+            const timerInterval = setInterval(() => {
+                if (timerValue > 0) {
+                    timerValue--;
+                    const minutes = Math.floor(timerValue / 60);
+                    const seconds = timerValue % 60;
+                    timerElement.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+                }
+            }, 1000);
+
+            // Store selected answers in local storage
+            function getScores() {
+                let score = 0;
+                for (let i = 1; i <= 10; i++) {
+                    const selectedOption = document.querySelector(`input[name="q${i}"]:checked`);
+                    if (selectedOption) {
+                        score += parseInt(selectedOption.value);
+                    }
+                }
+                return score;
+            }
+
+            // Handle "Next" button click
+            document.getElementById('nextButton').addEventListener('click', () => {
+                // Check if all questions are answered
+                for (let i = 1; i <= 1; i++) {
+                    const selectedOption = document.querySelector(`input[name="q${i}"]:checked`);
+                    if (!selectedOption) {
+                        alert('Please answer all questions before proceeding.');
+                        return;
+                    }
+                }
+
+                let score = getScores();
+
+                // Reverse scores for questions 4, 5, 7, and 8
+                const reverseScores = [4, 5, 7, 8];
+                reverseScores.forEach(q => {
+                    const selectedOption = document.querySelector(`input[name="q${q}"]:checked`);
+                    if (selectedOption) {
+                        score -= parseInt(selectedOption.value) * 2;
+                        score += 4 - parseInt(selectedOption.value);
+                    }
+                });
+
+                // Hide the question section and show the review section
+                document.getElementById('questionSection').style.display = 'none';
+                document.getElementById('reviewSection').style.display = 'block';
+                document.getElementById('totalScore').textContent = score;
+            });
+
+            // Handle "Back" button click
+            document.getElementById('backButton').addEventListener('click', () => {
+                document.getElementById('questionSection').style.display = 'block';
+                document.getElementById('reviewSection').style.display = 'none';
+            });
+        </script>
+        <script src="https://cdn.jsdelivr.net/npm/particles.js"></script>
+        <script>
+            particlesJS("particles-js", {
+                "particles": {
+                    "number": {
+                        "value": 6
+                    },
+                    "color": {
+                        "value": ["#ff416c", "#ff4b2b", "#ff6347", "#ff1493", "#8a2be2"]
+                    },
+                    "shape": {
+                        "type": "circle"
+                    },
+                    "opacity": {
+                        "value": 0.5
+                    },
+                    "size": {
+                        "value": 5
+                    },
+                    "move": {
+                        "enable": true,
+                        "speed": 3,
+                        "direction": "none",
+                        "out_mode": "out"
+                    }
+                }
+            });
+        </script>  
+</body>
+
+</html>
