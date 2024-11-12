@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./assets/vendors/liquid-icon/lqd-essentials/lqd-essentials.min.css">
+  <link rel="stylesheet" href="./assets/css/theme.css">
+  <link rel="stylesheet" href="./assets/css/utility.css">
+  <link rel="stylesheet" href="./assets/css/robolt/aibm-software/base.css">
+  <link rel="stylesheet" href="./assets/css/robolt/aibm-software/aibm-software.css">
+  <link rel="icon" type="image/png" sizes="128x128" href="./assets/images/favicon/favicon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700&amp;family=Nunito:wght@400;600;700&amp;family=Roboto&amp;display=swap" rel="stylesheet">
+  <title>Sleep Survey</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, rgba(255, 94, 120, 1), rgba(255, 94, 120, 0.2), rgba(72, 61, 139, 0.2), rgba(72, 61, 139, 1));
+      background-size: 400% 400%;
+      animation: gradientAnimation 6s ease infinite;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    @keyframes gradientAnimation {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .container {
+      max-width: 1000px; /* Increased container width */
+      width: 100%;
+      padding: 30px;
+      text-align: center;
+      background: #ffffff;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      border-radius: 15px;
+      animation: fadeIn 1.5s ease-out;
+      transform: perspective(800px) rotateX(5deg) rotateY(3deg);
+      transition: all 0.3s ease-in-out;
+      z-index: 10;
+    }
+
+    @media (max-width: 1200px) {
+      .container {
+        max-width: 900px; /* Adjust for smaller screens */
+      }
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        max-width: 100%; /* Full width on smaller devices */
+        padding: 20px;
+      }
+    }
+
+    .container:hover {
+      transform: perspective(800px) rotateX(0deg) rotateY(0deg) scale(1.05);
+    }
+
+    .branding {
+      font-size: 40px;
+      font-weight: bold;
+      color: rgb(255, 65, 0);
+      margin-bottom: 30px;
+      text-transform: uppercase;
+      text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.4);
+    }
+
+    .project-brief {
+      font-size: 18px;
+      line-height: 1.6;
+      margin-bottom: 30px;
+      color: #555;
+    }
+
+    .project-brief img, .project-brief video {
+      max-width: 100%;
+      height: auto;
+      margin: 15px 0;
+      border-radius: 12px;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .project-brief img:hover, .project-brief video:hover {
+      transform: scale(1.05);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .timer {
+      font-size: 22px;
+      margin-bottom: 20px;
+      color: #FF5722;
+      font-weight: bold;
+      text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    .consent-section {
+      margin-top: 30px;
+    }
+
+    .terms-link {
+      color: #007bff;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    .terms-link:hover {
+      color: #0056b3;
+      text-decoration: underline;
+    }
+
+    .start-btn {
+      margin-top: 30px;
+      padding: 15px 30px;
+      font-size: 20px;
+      color: white;
+      background-color: rgb(39, 174, 96);
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.3s;
+    }
+
+    .start-btn:hover {
+      background-color: rgb(34, 139, 34);
+      transform: translateY(-3px);
+    }
+
+    .start-btn:disabled {
+      background-color: #aaa;
+      cursor: not-allowed;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      justify-content: center;
+      align-items: center;
+      z-index: 20;
+    }
+
+    .modal-content {
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 600px;
+      width: 80%;
+      animation: slideDown 0.5s ease;
+    }
+
+    .modal button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: rgb(39, 174, 96);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideDown {
+      from { transform: translateY(-50px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <div class="branding">💤 Sleep Survey Form 💤</div>
+      <div class="project-brief">
+        <p>Welcome to our sleep survey! This initiative helps us understand sleep patterns to improve overall wellness.</p>
+        <p>Please take a few minutes to answer the questions below. Your participation is highly valued!</p>
+        <img src="sleep_image.jpg" alt="Project Image">
+        <video src="sleep_video.mp4" controls></video>
+      </div>
+      <div class="timer" id="timer">Time Remaining: 30:00</div>
+      <div class="consent-section">
+        <label>
+          <input type="checkbox" id="consentCheckboxMain">
+          I agree to the <a href="#" class="terms-link" onclick="showTerms()">Terms & Conditions</a>
+        </label>
+      </div>
+      <button class="start-btn" id="startBtn" disabled onclick="redirectToQuestionnaire()">Start Survey</button>
+
+    </div>
+  </header>
+
+  <div class="modal" id="topUpModal">
+    <div class="modal-content">
+      <h3>Terms and Conditions</h3>
+      <p>Please read the following terms and conditions carefully before proceeding:</p>
+      <ul>
+        <li><strong>Survey Participation:</strong> By participating in this survey, you agree to provide honest responses.</li>
+        <li><strong>Data Privacy:</strong> Your personal data will be handled with the utmost care and confidentiality.</li>
+      </ul>
+      <label>
+        <input type="checkbox" id="acceptTermsModal"> I accept the terms and conditions.
+      </label>
+      <button onclick="acceptTerms()">Accept</button>
+      <button onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+
+  <script>
+    let countdown = 1800;
+    const timerElement = document.getElementById("timer");
+    const consentCheckboxMain = document.getElementById("consentCheckboxMain");
+    const acceptTermsModal = document.getElementById("acceptTermsModal");
+    const startBtn = document.getElementById("startBtn");
+    const topUpModal = document.getElementById("topUpModal");
+
+    function updateTimer() {
+      const minutes = String(Math.floor(countdown / 60)).padStart(2, '0');
+      const seconds = String(countdown % 60).padStart(2, '0');
+      timerElement.innerHTML = `Time Remaining: ${minutes}:${seconds}`;
+      countdown = Math.max(countdown - 1, 0);
+    }
+
+    consentCheckboxMain.addEventListener('change', () => {
+      if (consentCheckboxMain.checked) showTerms();
+      else startBtn.disabled = true;
+    });
+
+    function showTerms() {
+      topUpModal.style.display = "flex";
+      acceptTermsModal.checked = false;
+    }
+
+    function acceptTerms() {
+      topUpModal.style.display = "none";
+      consentCheckboxMain.checked = true;
+      startBtn.disabled = !acceptTermsModal.checked;
+    }
+
+    function closeModal() {
+      topUpModal.style.display = "none";
+      consentCheckboxMain.checked = false;
+      startBtn.disabled = true;
+    }
+
+    acceptTermsModal.addEventListener('change', () => {
+      consentCheckboxMain.checked = acceptTermsModal.checked;
+      startBtn.disabled = !acceptTermsModal.checked;
+    });
+    function redirectToQuestionnaire() {
+    window.location.href = "questionnaire/index.html";
+  }
+    const timerInterval = setInterval(updateTimer, 1000);
+  </script>
+</body>
+</html>
