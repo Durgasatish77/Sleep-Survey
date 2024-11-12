@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Questionnaire for Assessment of Sleep and Related Co-morbidities</title>
+    <style>
+        /* Basic Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Background and Body */
+        body {
+            font-family: Arial, sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            background: linear-gradient(to bottom, rgb(239, 238, 238), white);
+        }
+
+        /* Container Styling */
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 3em;
+            max-width: 1500px;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            transform: translateY(-100%);
+            animation: fallDown 1s ease forwards;
+        }
+
+        /* Fall Down Animation */
+        @keyframes fallDown {
+            0% {
+                opacity: 0;
+                transform: translateY(-100%);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Heading and Text */
+        h1 {
+            color: #333;
+            font-size: 2em;
+            margin-bottom: 0.5em;
+            font-weight: bold;
+            text-transform: uppercase;
+            background: linear-gradient(45deg, #000000b0, #000000);
+            -webkit-background-clip: text;
+            color: transparent;
+            animation: textGlow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes textGlow {
+            0% { text-shadow: 0 0 10px rgb(225, 225, 225), 0 0 20px rgba(255, 75, 43, 0.2); }
+            100% { text-shadow: 0 0 20px rgba(233, 233, 233, 0.8), 0 0 30px rgba(255, 75, 43, 0.5); }
+        }
+
+        p {
+            color: #444;
+            line-height: 1.6;
+            font-size: 1em;
+            margin-bottom: 1.5em;
+        }
+
+        /* Input and Button Styling */
+        input[type="email"] {
+            padding: 0.75em;
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: box-shadow 0.3s;
+        }
+
+        input[type="email"]:focus {
+            box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+            outline: none;
+            border-color: #007bff;
+        }
+
+        .submit-btn {
+            margin-top: 1em;
+            padding: 0.8em 2.5em;
+            font-size: 1.1em;
+            color: white;
+            background: linear-gradient(90deg, #ff416c, #ff4b2b);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 75, 43, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            background: linear-gradient(90deg, #ff4b2b, #ff416c);
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(255, 75, 43, 0.5);
+        }
+
+        /* Particle Background Styling */
+        #particles-js {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+    </style>
+</head>
+<body>
+    <!-- Particle background -->
+    <div id="particles-js"></div>
+
+    <div class="container">
+        <h1>Questionnaire for Assessment of Sleep and Related Co-morbidities</h1>
+        <p><strong>Purpose:</strong> Our study aims to increase awareness about the significance of sleep and its relationship with comorbidities. We aim to identify the sleep-deprived population in the Chandigarh region, assess the impact of sleep on comorbidities, and determine which patients with comorbidities are associated with sleep deprivation.</p>
+        <p>There is a lack of awareness about the importance of sleep among individuals. In today's fast-paced world, sleep is often neglected. To address this lack of awareness, health professionals will be involved, and a sleep and related comorbidities dashboard will be created.</p>
+        <p>In order to conduct our research, we have developed a questionnaire that covers several aspects related to sleep, including daytime sleepiness, sleep duration and quality, stress levels, sleep-wake patterns, chronotype, and comorbidity scale.</p>
+        <p>We use a variety of scales to assess these factors, including the Pittsburg Sleep Quality Index (PSQI), Epworth Sleepiness Scale (ESS), Karolinska Sleepiness Scale (KSS), Perceived Stress Index, and a self-assessment scale to determine morningness-eveningness. We will measure participants' responses to these questions using scaled scores. The questionnaire will take approximately an hour, and the study details and informed consent will be discussed as well.</p>
+        
+        <form action="/survey" method="get">
+            <label for="email">Please enter your email (Gmail only) to start the survey:</label><br>
+            <input type="email" id="email" name="email" placeholder="yourname@gmail.com" required pattern="[a-z0-9._%+-]+@gmail\.com">
+            <button type="button" class="submit-btn" onclick="window.location.href='Sections/section_1.html';">
+                Start Survey
+            </button>
+            
+        </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/particles.js"></script>
+    <script>
+      particlesJS("particles-js", {
+          "particles": {
+              "number": {
+                  "value": 6
+              },
+              "color": {
+                  "value": ["#ff416c", "#ff4b2b", "#ff6347", "#ff1493", "#8a2be2"] // Multiple colors
+              },
+              "shape": {
+                  "type": "circle"
+              },
+              "opacity": {
+                  "value": 0.5
+              },
+              "size": {
+                  "value": 5
+              },
+              "move": {
+                  "enable": true,
+                  "speed": 3,
+                  "direction": "none",
+                  "out_mode": "out"
+              }
+          }
+      });
+  </script>  
+</body>
+</html>
